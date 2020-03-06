@@ -10,13 +10,21 @@ public class Movement : MonoBehaviour
     [SerializeField, Range(0, 360f)]
     private float rotation;
 
-    private Transform paddleCollider;
+    [SerializeField, Range(0, 360f)]
+    private float rotateSpeed = 40f;
 
-    // Start is called before the first frame update
+    [SerializeField, Range(0, 360f)]
+    private float maxAcceleration = 40f;
+    private float velocity;
+
+
+    private Transform paddleCollider;
 
     private void OnValidate()
     {
         setDistanceFromCenter();
+
+        transform.eulerAngles = new Vector3(0, 0, rotation);
     }
 
     private void GetReferenceToPaddleCollider()
@@ -35,7 +43,7 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        setDistanceFromCenter();
+        OnValidate();
     }
 
     private void setDistanceFromCenter()
@@ -45,13 +53,31 @@ public class Movement : MonoBehaviour
             GetReferenceToPaddleCollider();
         }
 
-        paddleCollider.localPosition = (0.5f * distanceFromCenter) * transform.up;
+        paddleCollider.localPosition = new Vector3(paddleCollider.localPosition.x, 0.5f * distanceFromCenter, paddleCollider.localPosition.z);
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        float rotateSpeed = 1f;
-        transform.Rotate(0f, 0f, rotateSpeed * Time.deltaTime);
+
+        float desiredVelocity = -Input.GetAxis("Horizontal") * rotateSpeed * Time.deltaTime;
+
+        float maxSpeedChange = maxAcceleration * Time.deltaTime;
+
+        velocity = Mathf.MoveTowards(velocity, desiredVelocity, maxSpeedChange);
+
+        transform.Rotate(0f, 0f, velocity);
+
+        rotation = transform.eulerAngles.z;
+    }
+
+    void OnGUI()
+    {
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 48;
+        style.normal.textColor = Color.white;
+
+
+        GUI.Label(new Rect(10, 25, 0, 0), "InputAxis: " + -Input.GetAxis("Horizontal"), style);
+        GUI.Label(new Rect(10, 75, 0, 0), "Velocity: " + (velocity / Time.deltaTime), style);
     }
 }
