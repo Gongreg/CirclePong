@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField, Range(0, 5f)]
-    private float distanceFromCenter;
-
     [SerializeField, Range(0, 360f)]
     private float rotation;
 

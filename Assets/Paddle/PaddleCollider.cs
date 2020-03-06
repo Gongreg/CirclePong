@@ -13,8 +13,6 @@ public class PaddleCollider : MonoBehaviour
 
     private Vector3[] vertices;
 
-    private float previousDistance;
-
     [SerializeField, Range(0, 5f)]
     private float width = 1f;
 
@@ -28,18 +26,18 @@ public class PaddleCollider : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //return;
+        return;
 
-        if (vertices == null)
-        {
-            return;
-        }
+        // if (vertices == null)
+        // {
+        //     return;
+        // }
 
-        Gizmos.color = Color.black;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            Gizmos.DrawSphere(vertices[i], 0.1f);
-        }
+        // Gizmos.color = Color.black;
+        // for (int i = 0; i < vertices.Length; i++)
+        // {
+        //     Gizmos.DrawSphere(vertices[i], 0.1f);
+        // }
 
     }
 
@@ -64,10 +62,11 @@ public class PaddleCollider : MonoBehaviour
         return triangles;
     }
 
-    private int addVertices(int index, float rotation)
+    private int AddVertices(int index, float rotation)
     {
         Vector3 normal = Quaternion.Euler(0, 0, rotation) * Vector3.up;
 
+        normal = transform.InverseTransformPoint(normal);
         Vector3 vertice = normal * radius;
         vertices[index] = vertice;
         vertices[index + 1] = normal * (radius + width);
@@ -75,19 +74,8 @@ public class PaddleCollider : MonoBehaviour
         return index + 2;
     }
 
-    private void GenerateMesh()
+    private int GetPartCount()
     {
-        Assert.AreNotEqual(0, divisionPerNDegrees);
-
-        Mesh mesh = new Mesh();
-        mesh.name = "PaddleColliderMesh";
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        float diameter = radius * 2;
-        float circumference = diameter * Mathf.PI;
-
-        float lengthOnCircumference = 360 * (lengthInDegrees / circumference);
-
         int partCount = 0;
 
         if (lengthInDegrees < divisionPerNDegrees)
@@ -96,52 +84,41 @@ public class PaddleCollider : MonoBehaviour
         }
         else
         {
-            //If there is a remainder left 
+            //If there is a remainder left, we treat the remainder as a separate part
             int additionalPart = lengthInDegrees % divisionPerNDegrees > 0 ? 1 : 0;
+
             partCount = (int)Mathf.Floor(lengthInDegrees / divisionPerNDegrees) + additionalPart;
         }
 
-        float partLength = lengthOnCircumference / (float)partCount;
+        return partCount;
+    }
+
+    private void GenerateMesh()
+    {
+        Assert.AreNotEqual(0, divisionPerNDegrees);
+
+        int partCount = GetPartCount();
+        float partLength = lengthInDegrees / (float)partCount;
 
         int verticeCount = partCount * 2 + 2;
-
         vertices = new Vector3[verticeCount];
 
         float parentRotation = transform.parent.eulerAngles.z;
         float leftRotation = parentRotation + lengthInDegrees / 2;
-        float rightRotation = parentRotation - lengthInDegrees / 2;
 
         int index = 0;
-        index = addVertices(index, leftRotation);
-        index = addVertices(index, rightRotation);
+        for (int part = 0; part < partCount; part++)
+        {
+            index = AddVertices(index, leftRotation - part * partLength);
+        }
 
-        //float halfWidth = width / 2f;
-        //float halfLenght = length / 2f;
+        float rightRotation = parentRotation - lengthInDegrees / 2;
+        index = AddVertices(index, rightRotation);
 
-        // int index = 0;
-        // float partPosition = center.x - halfLenght;
 
-        // vertices[index++] = new Vector3(partPosition, center.y - halfWidth, center.z);
-        // vertices[index++] = new Vector3(partPosition, center.y + halfWidth, center.z);
-
-        // for (int part = 0; part < length; part++)
-        // {
-        //     float firstPositionX = partPosition + part;
-
-        //     for (int division = 1; division <= divisionsPer1Length; division++)
-        //     {
-        //         float divisionPositionX = firstPositionX + divisionLength * division;
-        //         vertices[index++] = new Vector3(divisionPositionX, center.y - halfWidth, center.z);
-        //         vertices[index++] = new Vector3(divisionPositionX, center.y + halfWidth, center.z);
-        //     }
-
-        //     float lastPositionX = firstPositionX + 1;
-
-        //     vertices[index++] = new Vector3(lastPositionX, center.y - halfWidth, center.z);
-        //     vertices[index++] = new Vector3(lastPositionX, center.y + halfWidth, center.z);
-
-        // }
-
+        Mesh mesh = new Mesh();
+        mesh.name = "PaddleColliderMesh";
+        GetComponent<MeshFilter>().mesh = mesh;
         mesh.vertices = vertices;
         mesh.triangles = GenerateTriangles(partCount);
     }
