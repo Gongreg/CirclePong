@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField, Range(0, 10f)]
+    [SerializeField, Range(0, 5f)]
     private float distanceFromCenter;
 
     [SerializeField, Range(0, 360f)]
@@ -15,6 +15,7 @@ public class Movement : MonoBehaviour
 
     [SerializeField, Range(0, 360f)]
     private float maxAcceleration = 40f;
+
     private float velocity;
 
 
@@ -22,8 +23,6 @@ public class Movement : MonoBehaviour
 
     private void OnValidate()
     {
-        setDistanceFromCenter();
-
         transform.eulerAngles = new Vector3(0, 0, rotation);
     }
 
@@ -44,16 +43,6 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         OnValidate();
-    }
-
-    private void setDistanceFromCenter()
-    {
-        if (!paddleCollider)
-        {
-            GetReferenceToPaddleCollider();
-        }
-
-        paddleCollider.localPosition = new Vector3(paddleCollider.localPosition.x, 0.5f * distanceFromCenter, paddleCollider.localPosition.z);
     }
 
     private void Update()

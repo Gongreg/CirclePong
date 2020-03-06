@@ -194,7 +194,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1020602874
+--- !u!43 &640673539
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -205,14 +205,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 12
+    indexCount: 6
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 6
+    vertexCount: 4
     localAABB:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5, y: 0.5, z: 0}
+      m_Center: {x: 0, y: 3.0529041, z: 0}
+      m_Extent: {x: 0.55567414, y: 0.09848082, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -226,10 +226,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200020001000300020003000400040003000500
+  m_IndexBuffer: 000001000200020001000300
   m_VertexData:
     serializedVersion: 2
-    m_VertexCount: 6
+    m_VertexCount: 4
     m_Channels:
     - stream: 0
       offset: 0
@@ -287,8 +287,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 72
-    _typelessdata: 000000bf000000bf00000000000000bf0000003f0000000000000000000000bf00000000000000000000003f000000000000003f000000bf000000000000003f0000003f00000000
+    m_DataSize: 48
+    _typelessdata: 9e5c05bf45153d4000000000a9400ebf4ab04940000000009e5c053f45153d4000000000a9400e3f4ab0494000000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -342,8 +342,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0.5, y: 0.5, z: 0}
+    m_Center: {x: 0, y: 3.0529041, z: 0}
+    m_Extent: {x: 0.55567414, y: 0.09848082, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -385,7 +385,7 @@ Transform:
   - {fileID: 2114861803}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 78.46}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!114 &1737093850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f5f75ce92c489f4b8ccc14edb7e74ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceFromCenter: 0
+  distanceFromCenter: 2
   rotation: 0
   rotateSpeed: 180
   maxAcceleration: 20
@@ -465,7 +465,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114861799}
-  m_Mesh: {fileID: 1020602874}
+  m_Mesh: {fileID: 640673539}
 --- !u!114 &2114861802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,9 +478,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b082569834e75f442b1d159e8ad0761a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  length: 1
-  divisionsPer1Length: 1
-  width: 1
+  lengthInDegrees: 20
+  divisionPerNDegrees: 20
+  width: 0.2
+  radius: 3
 --- !u!4 &2114861803
 Transform:
   m_ObjectHideFlags: 0
