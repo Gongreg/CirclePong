@@ -1,50 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 
 public class PaddleCollider : MonoBehaviour
 {
-    [SerializeField, Range(0, 360f)]
+    [SerializeField, Range(0.01f, 360f)]
     private float lengthInDegrees = 5;
 
     [SerializeField, Range(1, 360f)]
     int divisionPerNDegrees = 4;
 
-    private Vector3[] vertices;
-
-    [SerializeField, Range(0, 5f)]
+    [SerializeField, Range(0.01f, 5f)]
     private float width = 1f;
 
-    [SerializeField, Range(0, 10f)]
+    [SerializeField, Range(0.01f, 10f)]
     private float radius = 3f;
+
+
+    private Vector3[] vertices;
+    private Vector2[] points = new Vector2[4];
 
     private void OnValidate()
     {
-        GenerateMesh();
-    }
-
-    private void OnDrawGizmos()
-    {
-        return;
-
-        // if (vertices == null)
-        // {
-        //     return;
-        // }
-
-        // Gizmos.color = Color.black;
-        // for (int i = 0; i < vertices.Length; i++)
-        // {
-        //     Gizmos.DrawSphere(vertices[i], 0.1f);
-        // }
+        UnityEditor.EditorApplication.delayCall += () =>
+        {
+            if (this == null) { return; }
+            GenerateMesh();
+        };
 
     }
-
     private int[] GenerateTriangles(int partCount)
     {
-        int[] triangles = new int[partCount * 6];
+        PolygonCollider2D polC = gameObject.GetComponent<PolygonCollider2D>();
+        polC.pathCount = partCount;
+        int[] colliderVerticeOrder = new int[4] { 0, 1, 3, 2 };
 
+        int[] triangles = new int[partCount * 6];
         int triangleIndex = 0, verticeIndex = 0;
         for (int part = 0; part < partCount; part++)
         {
@@ -55,12 +45,26 @@ public class PaddleCollider : MonoBehaviour
             triangles[triangleIndex + 4] = verticeIndex + 1;
             triangles[triangleIndex + 5] = verticeIndex + 3;
 
+
+            for (int i = 0; i < 4; i++)
+            {
+                int colliderIndex = colliderVerticeOrder[i];
+
+                points[i] = new Vector2(
+                    vertices[verticeIndex + colliderIndex].x,
+                    vertices[verticeIndex + colliderIndex].y
+                );
+            }
+
+            polC.SetPath(part, points);
+
             verticeIndex += 2;
             triangleIndex += 6;
         }
 
         return triangles;
     }
+
 
     private int AddVertices(int index, float rotation)
     {
@@ -103,7 +107,7 @@ public class PaddleCollider : MonoBehaviour
         int verticeCount = partCount * 2 + 2;
         vertices = new Vector3[verticeCount];
 
-        float parentRotation = transform.parent.eulerAngles.z;
+        float parentRotation = transform.eulerAngles.z;
         float leftRotation = parentRotation + lengthInDegrees / 2;
 
         int index = 0;

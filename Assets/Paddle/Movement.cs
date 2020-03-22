@@ -13,31 +13,24 @@ public class Movement : MonoBehaviour
 
     private float velocity;
 
-
-    private Transform paddleCollider;
-
     private void OnValidate()
+    {
+        setRotation();
+    }
+
+    private void setRotation()
     {
         transform.eulerAngles = new Vector3(0, 0, rotation);
     }
 
-    private void GetReferenceToPaddleCollider()
-    {
-        Transform[] transforms = GetComponentsInChildren<Transform>();
-
-        foreach (Transform t in transforms)
-        {
-            if (t.gameObject.name == "PaddleCollider")
-            {
-                paddleCollider = t;
-            }
-        }
-
-    }
-
     private void Awake()
     {
-        OnValidate();
+        setRotation();
+    }
+
+    private void FixedUpdate()
+    {
+        transform.Rotate(0f, 0f, velocity);
     }
 
     private void Update()
